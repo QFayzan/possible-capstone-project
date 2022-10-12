@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class TileCode : MonoBehaviour
 {
@@ -44,7 +45,6 @@ public class TileCode : MonoBehaviour
 
         }
         //more types can be added here
-        
     }
 
     // Update is called once per frame
@@ -52,28 +52,47 @@ public class TileCode : MonoBehaviour
     {
         
     }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            if (isExplodeTile)
+            {
+                //Implement bounce and then destroy
+                other.gameObject.GetComponent<PlayerController>().health-=2;
+                other.gameObject.GetComponent<PlayerController>().BounceUp(other.gameObject);
+                other.gameObject.GetComponent<Animator>().SetBool("IsJumping", true);
+                //Destroy(other.gameObject);
+                Destroy(gameObject);
+            }
+            else if (isJumpTile)
+            {
+                other.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * 4, ForceMode.Impulse);
+                other.gameObject.GetComponent<Animator>().SetBool("IsJumping", true);
+                //other.transform.position = new Vector3(other.transform.position.x, 4, other.transform.position.z);
+                Destroy(gameObject);
+                ScoreManager.score++;
+                GameManager.tilesDestroyed++;
+            }
+           
+         }
+    }
     void OnCollisionExit(Collision other)
     {
        if (other.gameObject.tag=="Player")
        {
-        if (isNormalTile)
-        { 
-        //Score++ when i implement it
-        Destroy(gameObject , 0.5f);
+            if (isNormalTile)
+            {
+                //Score++ when i implement it
+                ScoreManager.score++;
+                //tiles destroyed is used to show how many tiles are blown up
+                Destroy(gameObject, 0.5f);
+                GameManager.tilesDestroyed++;
+                GameManager.tilesToDestroy--;
+            }
+
         }
-        else if(isExplodeTile)
-        {
-            //Implement bounce and then destroy
-            //bounce here
-            Destroy(other.gameObject);
-            Destroy(gameObject);
-        }
-        else if(isJumpTile)
-        {
-            other.transform.position = new Vector3 (other.transform.position.x , 4 , other.transform.position.z);
-            Destroy(gameObject);
-        }
-       }
        
     }
 }
