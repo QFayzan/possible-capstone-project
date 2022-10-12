@@ -1,27 +1,17 @@
 using UnityEngine;
  using System.Collections;
-using TMPro;
-using UnityEngine.Tilemaps;
-
-public class StageSpawner : MonoBehaviour {
+ 
+ public class StageSpawner : MonoBehaviour {
  public GameObject floor;
  private int lastStageLength =4;
- [SerializeField]public static int stageLength =4;
- [SerializeField]private int ColumnLength =4;
- private int RowHeight =4;
+ public static int stageLength =4;
+ private int ColumnLength =3;
+ private int RowHeight =3;
  public static int totalTiles = 0;
- public static int roundNumber ;
  public GameObject[,] stageUnit;
- public TextMeshProUGUI roundNumberDisplay;
  // Use this for initialization
  void Start()
  {
-    //DOne in start to ensure it remains persistent on restart
-    roundNumber = 1;
-    stageLength = 4;
-    totalTiles = 0;
-    totalTiles = stageLength * ColumnLength; //starts the program to calculate the number of tiles generated
-
     //Basically only edit stage length for rows and columns
     ColumnLength = stageLength;
     RowHeight = stageLength;
@@ -35,31 +25,22 @@ public class StageSpawner : MonoBehaviour {
          }
            
         }
-       
-    }
+        TotalTiles();
+ }
     void Update()
     {
-        //Used to display current round may add to score 
-        roundNumberDisplay.text = "Current Round is  :" + roundNumber.ToString();
-
         if (stageLength > lastStageLength)
         {
-            LoadNextStage();
-        }
-        if (roundNumber >3)
-        {
-            //Lauch enemy
+            DestroyStage();
+            SpawnStage();
+            lastStageLength = stageLength;
         }
     }
-    public void LoadNextStage()
+    int TotalTiles()
     {
-        DestroyStage();
-        SpawnStage();
-        lastStageLength = stageLength;
-        OnNewRound();
-        roundNumber++;
+        totalTiles = stageLength * ColumnLength;
+        return totalTiles;
     }
-  
    public void SpawnStage()
     {
         //Basically only edit stage length for rows and columns
@@ -75,22 +56,11 @@ public class StageSpawner : MonoBehaviour {
             }
 
         }
-        totalTiles = stageLength * ColumnLength;
-        //Have to set this to 0 since it stays static and messes up the gameplay
-        GameManager.tilesDestroyed = 0;
+        TotalTiles();
     }
     public void DestroyStage()
     {
-        GameObject[] oldTiles = GameObject.FindGameObjectsWithTag("Tile");
-        foreach (GameObject v in oldTiles)
-        {
-            Destroy(v);
-        }
-
+       // Destroy(GameObject.FindGameObjectsWithTag)
         
-    }
-    public void OnNewRound()
-    {
-        ScoreManager.score += 100;
     }
  }

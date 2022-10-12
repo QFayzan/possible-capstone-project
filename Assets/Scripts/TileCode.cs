@@ -60,16 +60,13 @@ public class TileCode : MonoBehaviour
             if (isExplodeTile)
             {
                 //Implement bounce and then destroy
-                other.gameObject.GetComponent<PlayerController>().health-=2;
-                other.gameObject.GetComponent<PlayerController>().BounceUp(other.gameObject);
-                other.gameObject.GetComponent<Animator>().SetBool("IsJumping", true);
-                //Destroy(other.gameObject);
+                //bounce here
+                Destroy(other.gameObject);
                 Destroy(gameObject);
             }
             else if (isJumpTile)
             {
                 other.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * 4, ForceMode.Impulse);
-                other.gameObject.GetComponent<Animator>().SetBool("IsJumping", true);
                 //other.transform.position = new Vector3(other.transform.position.x, 4, other.transform.position.z);
                 Destroy(gameObject);
                 ScoreManager.score++;
